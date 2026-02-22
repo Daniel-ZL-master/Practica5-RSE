@@ -41,7 +41,7 @@ def main():
     with open(log_filename, mode='w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(
-            ['Aceleracion X', 'Aceleracion Y', 'Aceleracion Z', 'Giroscopio X', 'Giroscopio Y', 'Giroscopio Z'])
+            ['Aceleracion X', 'Aceleracion Y', 'Aceleracion Z', 'Giroscopio X', 'Giroscopio Y', 'Giroscopio Z', 'Magnetometro X', 'Magnetometro Y', 'Magnetometro Z'])
 
     # 3. Configurar la figura con 2 subplots apilados (compartiendo el eje X)
     fig, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(10, 8))
@@ -81,6 +81,10 @@ def main():
         window_gy = []
         window_gz = []
 
+        window_mx = []
+        window_my = []
+        window_mz = []
+
         while serial_port.in_waiting > 0:
             try:
                 line = serial_port.readline().decode('utf-8').strip()
@@ -89,12 +93,13 @@ def main():
 
                 output_data = line.split(';')
 
-                if len(output_data) == 6:
+                if len(output_data) == 9:
                     lines_to_write.append(output_data)
 
                     # Extraer datos y separar en listas
                     ax_x, ax_y, ax_z = map(float, output_data[0:3])
                     gx, gy, gz = map(float, output_data[3:6])
+                    mx, my, mz = map(float, output_data[6:9])
 
                     window_ax.append(ax_x)
                     window_ay.append(ax_y)
@@ -103,6 +108,10 @@ def main():
                     window_gx.append(gx)
                     window_gy.append(gy)
                     window_gz.append(gz)
+
+                    window_mx.append(mx)
+                    window_my.append(my)
+                    window_mz.append(mz)
 
             except ValueError:
                 pass
